@@ -1,0 +1,63 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "91bfc6ab-eadb-432d-8abd-4f36a91a5027",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b5642a3-783d-425a-ae26-42035dfa55a9",
+              "name": "Mensagem ",
+              "value": "Olá! Primeira automação criada com sucesso ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "a8b75aea-e9cb-403e-b8ac-9e85a54ad873",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8dea762c-80a1-463b-ba45-38145fac791b",
+  "meta": {
+    "instanceId": "7a2db861d7d3f4b5f3b95286e267a2a51291ab15a32b0c78e8cb88d8e95891f5"
+  },
+  "id": "hFLB7hmKoNsMRYFH",
+  "tags": []
+}
