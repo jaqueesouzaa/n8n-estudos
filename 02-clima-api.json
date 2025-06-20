@@ -1,0 +1,124 @@
+{
+  "name": "Clima por cidade - Aula 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        -520
+      ],
+      "id": "77d5b5bf-21d4-4b65-9113-e4969b69e084",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.open-meteo.com/v1/forecast?latitude={{$json[\"latitude\"]}}&longitude={{$json[\"longitude\"]}}&current_weather=true",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -540,
+        -300
+      ],
+      "id": "60831abf-c18b-4f40-ae08-a7864105380c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const clima = $json.current_weather;\nconst cidade = $node[\"Set\"].json[\"cidade\"];\n\nreturn [{\n  json: {\n    cidade,\n    temperatura: clima.temperature + \"°C\",\n    vento: clima.windspeed + \" km/h\",\n    hora: clima.time,\n    resumo: `Em ${cidade} está fazendo ${clima.temperature}°C com vento de ${clima.windspeed} km/h`\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        -280
+      ],
+      "id": "929098c1-9dc6-478a-a9d3-06e50a819ebe",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "890ab826-ea2c-4555-901d-7bb3032366c0",
+              "name": "cidade",
+              "value": "São Paulo",
+              "type": "string"
+            },
+            {
+              "id": "6c595c44-a6d4-484e-acb5-508952f9632f",
+              "name": "latitude",
+              "value": "-23.5505",
+              "type": "string"
+            },
+            {
+              "id": "41ccf3e8-1980-4c30-9a27-fbd661ad4e1c",
+              "name": "longitude",
+              "value": "-46.6333",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -760,
+        -300
+      ],
+      "id": "d07ab50f-d352-4d3a-9786-7daa529af82c",
+      "name": "Set"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "341a2af1-632b-476d-b47d-6da7c7cfe558",
+  "meta": {
+    "instanceId": "7a2db861d7d3f4b5f3b95286e267a2a51291ab15a32b0c78e8cb88d8e95891f5"
+  },
+  "id": "aHQKwI6cufFNvbGg",
+  "tags": []
+}
