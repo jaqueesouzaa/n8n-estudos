@@ -1,0 +1,264 @@
+{
+  "name": "Tweet-to-email-hello-world",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        -120
+      ],
+      "id": "142712fd-cde4-4a56-83a1-f4d709d930d2",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.twitter.com/2/users/by/username/promosdaaqua",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AAAAAAAAAAAAAAAAAAAAAJCx0wEAAAAA9bz31DUU0ZF%2BtNZBdlG44FHnK%2Fw%3DxoZIwdUhWXi37idHyTwjx6GMEXz1jnrDrXCJlsNqthNeDGghPm"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -40,
+        -400
+      ],
+      "id": "453a7203-5a0f-459a-86f2-f8b666684e2f",
+      "name": "API TT - GET MY ID",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "40f514ee-ebc6-4350-8bec-4ba8f856b51f",
+              "name": "userId",
+              "value": "={{ $json[\"data\"][\"id\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        180,
+        -400
+      ],
+      "id": "4f5572b2-a940-4dcd-92eb-f5371197d4a8",
+      "name": "SAVE ID",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=Https://api.twitter.com/2/users/{{ $node[\"SAVE ID\"].json[\"userId\"] }}/tweets?max_results=1&tweet.fields=text,created_at",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer AAAAAAAAAAAAAAAAAAAAAJCx0wEAAAAA9bz31DUU0ZF%2BtNZBdlG44FHnK%2Fw%3DxoZIwdUhWXi37idHyTwjx6GMEXz1jnrDrXCJlsNqthNeDGghPm"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        380,
+        -400
+      ],
+      "id": "0a12fffa-ba00-4844-95f2-a8b9a9bf5a28",
+      "name": "API TT - GET LAST TT",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f204492-a11e-4c27-bc7a-cff85b93054c",
+              "name": "tweetText",
+              "value": "\"Olá, mundo! Enviado pelo N8N #automação\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -200,
+        -120
+      ],
+      "id": "26874e65-32da-4b41-9da6-ec02d51bc837",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.twitter.com/2/tweets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth1Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{$node['Set'].json['tweetText']}}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        140,
+        -120
+      ],
+      "id": "c741187e-ba8d-4a1f-80a8-f952cac4cac9",
+      "name": "HTTP Request",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "uCuWBBn9GUAxNE2V",
+          "name": "Unnamed credential"
+        },
+        "oAuth1Api": {
+          "id": "876dtOROL5iQQPoD",
+          "name": "Jaque - Twitter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "#obsoleto",
+        "height": 280,
+        "width": 900
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -260,
+        -460
+      ],
+      "typeVersion": 1,
+      "id": "3075c4d6-f567-4492-8d68-9862f83954db",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "- até aqui ok, enviando tweet. \nImplantar etapa do telegram",
+        "width": 340
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        340,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "ef6811f7-bbd0-46b7-b937-ea2390c59f91",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API TT - GET MY ID": {
+      "main": [
+        [
+          {
+            "node": "SAVE ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SAVE ID": {
+      "main": [
+        [
+          {
+            "node": "API TT - GET LAST TT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "API TT - GET MY ID",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "API TT - GET LAST TT": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ea352f77-04db-4741-b41b-fad5dc8630bf",
+  "meta": {
+    "instanceId": "6be0a4afc8686c2e5124789990836330e8ecf21469e1fde77d06a568e0829855"
+  },
+  "id": "IHHHvi6xosi9YbTX",
+  "tags": []
+}
