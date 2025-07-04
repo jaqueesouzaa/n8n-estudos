@@ -1,0 +1,228 @@
+{
+  "name": "Telegram-to-twitter",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -700,
+        -140
+      ],
+      "id": "243b4479-f21a-49a0-8834-7b229087c686",
+      "name": "Telegram Trigger",
+      "webhookId": "cc87d1c2-8017-4ced-85cc-b99670302729",
+      "credentials": {
+        "telegramApi": {
+          "id": "aW54fhHKuSOO06Gb",
+          "name": "Telegram Jaqueline"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Captura o texto em qualquer posição conhecida\nconst raw =\n  $json.message?.text       // payload padrão do Telegram Trigger\n  || $json.text             // caso esteja na raiz\n  || '';                    // fallback\n\nif (!raw) {\n  throw new Error('Não encontrei o campo \"text\". Veja o payload do Telegram Trigger e ajuste o path.');\n}\n\n// 2. Tema\nconst temaMatch = raw.match(/Tema\\s*:\\s*(.+?)(?=\\n|$)/i);\nconst tema = temaMatch ? temaMatch[1].trim() : '';\n\n// 3. Links\nconst linkRegex = /Link\\d+\\s*:\\s*(https?:\\/\\/[^\\s\\n]+)/gi;\nconst links = [];\nlet m;\nwhile ((m = linkRegex.exec(raw)) !== null) {\n  links.push(m[1]);\n}\n\n// 4. Retorna\nreturn [\n  {\n    json: { tema, links }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        -140
+      ],
+      "id": "bf2fb762-d21c-4117-aca8-038e88008717",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "links",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        -140
+      ],
+      "id": "b02ebd7a-4c98-4936-a1f5-6edadf68e48f",
+      "name": "Split Out - Links"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.links }}",
+        "options": {
+          "systemMessage": "você é um influenciador digital famoso no twitter, seu nome é  promosdaaqua e vc também é afiliado shopee. Você vai receber links de produtos e você vai criar tweets criativos e curtos mas que chamam atenção e instigam a curiosidade do público. Não use em hipótese alguma nome de outras páginas famosas do twitter. Tome esse cuidado ao criar as legendas. inclua o link no final do tweet e não use hashtags"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        -140
+      ],
+      "id": "a09045ad-dac4-4524-b422-2355562cce07",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        60
+      ],
+      "id": "87b19fd7-0dc9-4eb9-8556-61a311414d1e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "SZCjWCWh9PMRCLz0",
+          "name": "Google Gemini(PaLM) Api account - Jaque"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -140
+      ],
+      "id": "21c2df63-eef2-4b9b-bd4e-e57bb1ec7fc3",
+      "name": "X",
+      "credentials": {
+        "twitterOAuth2Api": {
+          "id": "SmR63n0R8Y3wHnwM",
+          "name": "X account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 353056614,
+          "message": {
+            "message_id": 11,
+            "from": {
+              "id": 6756443359,
+              "is_bot": false,
+              "first_name": "Jaque",
+              "language_code": "pt-br"
+            },
+            "chat": {
+              "id": 6756443359,
+              "first_name": "Jaque",
+              "type": "private"
+            },
+            "date": 1751508166,
+            "text": "Tema: Celulares e acessórios, por menos de 10 reais\nLink1:https://shopee.com.br/Suporte-De-Silicone-Com-Ventosa-Para-Capinha-Celular-e-Para-Uso-Di%C3%A1rio-i.1249391293.21697923713\nLink2:https://shopee.com.br/PROMO%C3%87%C3%83O%EF%BC%81Atualizar%EF%BC%81Suporte-Para-Celular-e-Tablet-Dobr%C3%A1vel-Port%C3%A1til-Ajust%C3%A1vel-Apoio-Mesa-i.371656735.22591651192\nLink3:https://shopee.com.br/Inv%C3%B3lucro-Para-Cabo-De-Conector-Do-Carregador-Linha-de-Molas-Protetor-de-Bobinas-Organizar-Flores-Cora%C3%A7%C3%A3o-Capa-Macia-i.1006215031.27904202891",
+            "entities": [
+              {
+                "offset": 58,
+                "length": 122,
+                "type": "url"
+              },
+              {
+                "offset": 187,
+                "length": 174,
+                "type": "url"
+              },
+              {
+                "offset": 368,
+                "length": 178,
+                "type": "url"
+              }
+            ],
+            "link_preview_options": {
+              "url": "https://shopee.com.br/Suporte-De-Silicone-Com-Ventosa-Para-Capinha-Celular-e-Para-Uso-Di%C3%A1rio-i.1249391293.21697923713",
+              "prefer_small_media": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Split Out - Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out - Links": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "X",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "73c5f3af-7240-4d82-9476-fc3faf64fc1a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6be0a4afc8686c2e5124789990836330e8ecf21469e1fde77d06a568e0829855"
+  },
+  "id": "IHHHvi6xosi9YbTX",
+  "tags": []
+}
